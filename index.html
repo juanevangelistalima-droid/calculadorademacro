@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora de macros e calorias para dietas</title>
+<style>
+  body {font-family: Arial, sans-serif; margin: 0; background: #f4f4f4;}
+  header {background: #28a745; color: #fff; text-align: center; padding: 15px;}
+  h1 {margin: 0; font-size: 22px;}
+  .container {max-width: 500px; margin: 20px auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1);}
+  label {display: block; margin: 10px 0 5px;}
+  input, select {width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 5px; border: 1px solid #ccc;}
+  button {background: #28a745; color: #fff; border: none; padding: 12px; border-radius: 5px; width: 100%; font-size: 16px; cursor: pointer;}
+  button:hover {background: #218838;}
+  .result {margin-top: 20px; background: #f9f9f9; padding: 15px; border-radius: 8px;}
+  footer {background: #222; color: #fff; text-align: center; padding: 15px; position: fixed; bottom: 0; width: 100%; font-size: 14px;}
+  .summary {margin-top: 15px; background: #eef6ee; padding: 10px; border-left: 5px solid #28a745; border-radius: 5px; font-size: 14px;}
+  .contact-btn {background: #25d366; color: white; padding: 12px; display: inline-block; text-decoration: none; border-radius: 5px; margin-top: 10px; width: 100%; text-align: center; font-size: 16px;}
+</style>
+</head>
+<body>
+<header>
+  <h1>Calculadora de macros e calorias para dietas</h1>
+  <p>Desenvolvida por Juliana Oliveira</p>
+</header>
+
+<div class="container">
+  <label>Nome:</label>
+  <input type="text" id="nome">
+
+  <label>Sexo:</label>
+  <select id="sexo">
+    <option value="Masculino">Masculino</option>
+    <option value="Feminino">Feminino</option>
+  </select>
+
+  <label>Idade (anos):</label>
+  <input type="number" id="idade">
+
+  <label>Peso (kg):</label>
+  <input type="number" id="peso">
+
+  <label>Altura (cm):</label>
+  <input type="number" id="altura">
+
+  <label>Nível de Atividade:</label>
+  <select id="atividade">
+    <option value="1.2">Sedentário</option>
+    <option value="1.375">Levemente ativo</option>
+    <option value="1.55">Moderadamente ativo</option>
+    <option value="1.725">Muito ativo</option>
+    <option value="1.9">Extremamente ativo</option>
+  </select>
+
+  <label>Objetivo:</label>
+  <select id="objetivo">
+    <option value="perder">Perder Peso</option>
+    <option value="manter">Manter Peso</option>
+    <option value="ganhar">Ganhar Massa</option>
+  </select>
+
+  <button onclick="calcularMacros()">Calcular</button>
+
+  <div class="result" id="resultado" style="display:none;"></div>
+  <div class="summary" id="resumo" style="display:none;"></div>
+  <a id="contatoJuliana" class="contact-btn" href="#" target="_blank" style="display:none;">Falar com Juliana Oliveira</a>
+</div>
+
+<footer>
+  Para montar uma dieta personalizada e atingir seus objetivos, entre em contato com Juliana Oliveira.
+</footer>
+
+<script>
+function calcularMacros(){
+  const nome = document.getElementById('nome').value;
+  const sexo = document.getElementById('sexo').value;
+  const idade = parseInt(document.getElementById('idade').value);
+  const peso = parseFloat(document.getElementById('peso').value);
+  const altura = parseFloat(document.getElementById('altura').value);
+  const atividade = parseFloat(document.getElementById('atividade').value);
+  const objetivo = document.getElementById('objetivo').value;
+
+  if(!nome || !idade || !peso || !altura){
+    alert('Preencha todos os campos!');
+    return;
+  }
+
+  let tmb = (sexo === 'Masculino') ? (10*peso + 6.25*altura - 5*idade + 5) : (10*peso + 6.25*altura - 5*idade - 161);
+  let tdee = tmb * atividade;
+
+  let caloriasMeta;
+  if(objetivo === 'perder') caloriasMeta = tdee * 0.8;
+  else if(objetivo === 'ganhar') caloriasMeta = tdee * 1.15;
+  else caloriasMeta = tdee;
+
+  let proteina = peso * 2;
+  let gordura = (caloriasMeta * 0.25) / 9;
+  let carbo = (caloriasMeta - ((proteina*4)+(gordura*9))) / 4;
+
+  const resultadoDiv = document.getElementById('resultado');
+  resultadoDiv.style.display = 'block';
+  resultadoDiv.innerHTML = `
+    <h3>Olá, ${nome}!</h3>
+    <p><strong>TMB:</strong> ${tmb.toFixed(2)} kcal</p>
+    <p><strong>TDEE:</strong> ${tdee.toFixed(2)} kcal</p>
+    <p><strong>Calorias Meta:</strong> ${caloriasMeta.toFixed(2)} kcal</p>
+    <p><strong>Proteína:</strong> ${proteina.toFixed(0)} g</p>
+    <p><strong>Gordura:</strong> ${gordura.toFixed(1)} g</p>
+    <p><strong>Carboidratos:</strong> ${carbo.toFixed(1)} g</p>
+  `;
+
+  const resumoDiv = document.getElementById('resumo');
+  resumoDiv.style.display = 'block';
+  resumoDiv.innerHTML = `<strong>Dica:</strong> Para alcançar seu objetivo (${objetivo === 'perder' ? 'perder peso' : objetivo === 'ganhar' ? 'ganhar massa' : 'manter peso'}), siga seu plano e mantenha consistência na alimentação e nos treinos.`;
+
+  const mensagem = encodeURIComponent(`Olá Juliana! Gostaria de montar uma dieta personalizada. Aqui estão meus dados e cálculos:\n\nNome: ${nome}\nSexo: ${sexo}\nIdade: ${idade}\nPeso: ${peso} kg\nAltura: ${altura} cm\nObjetivo: ${objetivo === 'perder' ? 'Perder Peso' : objetivo === 'ganhar' ? 'Ganhar Massa' : 'Manter Peso'}\n\nResultados:\nTMB: ${tmb.toFixed(2)} kcal\nTDEE: ${tdee.toFixed(2)} kcal\nCalorias Meta: ${caloriasMeta.toFixed(2)} kcal\nProteína: ${proteina.toFixed(0)} g\nGordura: ${gordura.toFixed(1)} g\nCarboidratos: ${carbo.toFixed(1)} g`);
+
+  const contatoJuliana = document.getElementById('contatoJuliana');
+  contatoJuliana.style.display = 'inline-block';
+  contatoJuliana.href = `https://wa.me/5511949014962?text=${mensagem}`;
+}
+</script>
+</body>
+</html>
